@@ -3,7 +3,7 @@
 class Cell:
 
 
-    def __init__(self, row, col, number, square, initial):
+    def __init__(self, row, col, square, number, initial):
         self.row = row
         self.col = col
         self.square = square

@@ -1,4 +1,5 @@
 # -*-coding:Utf-8 -*
 
-print("a,bcde".split(","))
+for i in range(0, 9):
+    print(i)
 
