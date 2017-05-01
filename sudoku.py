@@ -85,8 +85,8 @@ class Sudoku:
 
 
     def __repr__(self):
-        top = "|-----------------------------------------------------| \n"
-        bottom = "-------------------------------------------------------"
+        top = "|-------------------------------------------------------|| \n"
+        bottom = "--------------------------------------------------------||"
         cont = ""
 
         for i in range(0, 9):
@@ -94,7 +94,7 @@ class Sudoku:
             for j in range(0, 9):
                 row_string += "  " + str(self._rows[i][j].number)
                 if (j + 1) % 3 == 0:
-                    row_string += " ||"
+                    row_string += "  ||"
                 else:
                     row_string += "  ¦"
             row_string += "\n"
@@ -102,26 +102,34 @@ class Sudoku:
             if i == 8:
                 pass
             elif (i + 1) % 3 == 0:
-                cont += "|=====|=====|====||=====|=====|====||=====|=====|=====| \n"
+                cont += "|=====|=====|=====||=====|=====|=====||=====|=====|=====|| \n"
             else:
-                cont += "|-----|-----|----||-----|-----|----||-----|-----|-----| \n"
+                cont += "|-----|-----|-----||-----|-----|-----||-----|-----|-----|| \n"
 
         return top + cont + bottom
 
     def solve(self):
         i = 0
         j = 0
+        k = 0
         back = False
         while i < 81:
             if i < 0:
+                self.negativesDiagnosis()
                 raise IndexError("Something went seriously wrong: your code is checking negative cells")
             i = self.isInitial(i, back)
             if i > 80:
                 return
+            if j > 19039:
+                print("Boo")
             cell = self._cells[i]
             result = self.addAndCheck(cell)
             if result == True:
-                print("[{}] This one's worked out: {} value {}".format(j, i, cell.number))
+                if k % 10 != 0:
+                    print("[{}]".format(j), end="")
+                else:
+                    print("[{}]".format(j))
+                k += 1
                 back = False
                 i += 1
             else:
@@ -136,6 +144,7 @@ class Sudoku:
             #     if result == False & cell.initial == False:
             #         cell.number = 0
 
+        print("")
         return
 
     def isInitial(self, i, back):
@@ -152,7 +161,7 @@ class Sudoku:
     def addAndCheck(self, cell):
         if cell.number < 9:
             cell.number += 1
-            valid = self.checkGroup(cell)
+            valid = self.checkValid(cell)
             if valid == False:
                result = self.addAndCheck(cell)
                return result
@@ -161,39 +170,33 @@ class Sudoku:
         else:
             return False
 
-    def checkGroup(self, cell):
-        singleInRow = self.checkRow(cell)
+    def checkValid(self, cell):
+        singleInRow = self.checkGroup(cell, cell.row)
         if singleInRow == False:
             return False
 
-        singleInCol = self.checkCol(cell)
+        singleInCol = self.checkGroup(cell, cell.col)
         if singleInCol == False:
             return False
 
-        singleInSquare = self.checkSquare(cell)
+        singleInSquare = self.checkGroup(cell, cell.square)
         if singleInSquare == False:
             return False
 
         return True
 
-
-    def checkRow(self, cell):
-        for k, nCell in cell.row.items():
+    def checkGroup(self, cell, group):
+        for k, nCell in group.items():
             if (nCell.number == cell.number) & (nCell != cell):
                 return False
         return True
 
-    def checkCol(self, cell):
-        for k, nCell in cell.col.items():
-            if (nCell.number == cell.number) & (nCell != cell):
-                return False
-        return True
+    def negativesDiagnosis(self):
+        print("We've entered the diagnosis centre")
+        for c in self._cells:
+            if c.initial == False & c.number != 0:
+                print("This cell col {0}, row {1}, value {2}".format(c.col, c.row, c.number))
 
-    def checkSquare(self, cell):
-        for k, nCell in cell.square.items():
-            if (nCell.number == cell.number) & (nCell != cell):
-                return False
-        return True
 
 
 

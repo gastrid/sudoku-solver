@@ -2,16 +2,21 @@
 
 from sudoku import Sudoku
 
-string = input("Enter your sudoku string > ")
+yes = ""
 
-sud = Sudoku()
+while yes != "yes":
+    string = input("Enter your sudoku string > ")
 
-sud.stringToCell(string)
+    sud = Sudoku()
 
-print(sud)
+    sud.stringToCell(string)
 
-for cell in sud._cells:
-    if cell.initial:
-        print("yes")
+    print(sud)
+
+    yes = input("Is this what you want to solve? (yes/no)").lower()
+
+    if yes == "yes":
+        sud.solve()
+        print(sud)
 
 
