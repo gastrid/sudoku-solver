@@ -37,7 +37,7 @@ class Sudoku:
         square_j = 0
         # The vertical position in the square  -- 0-2
         square_k = 0
-        # That actual position I should have used all along
+
         square_pos = 0
 
         for nb in sudoku_string:
@@ -83,25 +83,6 @@ class Sudoku:
                     square_i = 0
 
 
-            square_i += 1
-            square_pos += 1
-            if square_i > 2:
-                square += 1
-                square_j += 1
-                square_i = 0
-                square_pos = 0
-                if square_j > 2:
-                    square_k += 1
-                    if square_k > 2:
-                        square_k = 0
-                    else:
-                        square -= 3
-                        square_pos += 3
-                    square_i = 0
-                else:
-                    square_pos -= 3
-
-
 
     def __repr__(self):
         top = "|-----------------------------------------------------| \n"
@@ -135,6 +116,8 @@ class Sudoku:
             if i < 0:
                 raise IndexError("Something went seriously wrong: your code is checking negative cells")
             i = self.isInitial(i, back)
+            if i > 80:
+                return
             cell = self._cells[i]
             result = self.addAndCheck(cell)
             if result == True:
@@ -157,11 +140,12 @@ class Sudoku:
 
     def isInitial(self, i, back):
         if self._cells[i].initial == True:
-            if back:
-                i -= 1
-            else:
-                i += 1
-            i = self.isInitial(i, back)
+            if i < 80:
+                if back:
+                    i -= 1
+                else:
+                    i += 1
+                i = self.isInitial(i, back)
         return i
 
 

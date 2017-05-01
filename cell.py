@@ -53,7 +53,7 @@ class Block(dict):
             if (key <= 8) & (key >= 0):
                 dict.__setitem__(self, key, value)
             else:
-                raise ValueError("The dictionary key is incorrect.")
+                raise ValueError("The dictionary key {} (with value {}) is incorrect.".format(key, value))
         else:
             raise ValueError("The entry value is not type Cell.")
 
