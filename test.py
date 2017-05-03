@@ -12,6 +12,7 @@ print(sud)
 
 sud.solve()
 
+print("")
 print(sud)
 
 

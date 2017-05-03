@@ -1,3 +1,5 @@
+# -*-coding:Utf-8 -*
+
 from cell import Cell, Block
 
 class Sudoku:
@@ -120,13 +122,11 @@ class Sudoku:
             i = self.isInitial(i, back)
             if i > 80:
                 return
-            if j > 19039:
-                print("Boo")
             cell = self._cells[i]
             result = self.addAndCheck(cell)
             if result == True:
                 if k % 10 != 0:
-                    print("[{}]".format(j), end="")
+                    print("[{}]".format(j), end='')
                 else:
                     print("[{}]".format(j))
                 k += 1
@@ -149,12 +149,12 @@ class Sudoku:
 
     def isInitial(self, i, back):
         if self._cells[i].initial == True:
-            if i < 80:
                 if back:
                     i -= 1
                 else:
                     i += 1
-                i = self.isInitial(i, back)
+                if i < 81:
+                    i = self.isInitial(i, back)
         return i
 
 
