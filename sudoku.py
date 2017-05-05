@@ -139,10 +139,6 @@ class Sudoku:
             j += 1
 
 
-            # if cell.number != 0:
-            #     result = self.checkRow(cell)
-            #     if result == False & cell.initial == False:
-            #         cell.number = 0
 
         print("")
         return
