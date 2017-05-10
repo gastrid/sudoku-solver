@@ -1,19 +1,24 @@
 # -*-coding:Utf-8 -*
 
 from sudoku import Sudoku
+import memory_profiler
 
-string = "350400108800007000004001000048705001010080030900604850000100300000200009702003016"
 
-sud = Sudoku()
+@profile
+def function():
 
-sud.stringToCell(string)
+    string = "350400108800007000004001000048705001010080030900604850000100300000200009702003016"
 
-print(sud)
+    sud = Sudoku()
 
-sud.solve()
+    sud.stringToCell(string)
 
-print("")
-print(sud)
+    print(sud)
+
+    sud.solve()
+
+    print("")
+    print(sud)
 
 
 
