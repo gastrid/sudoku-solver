@@ -136,8 +136,6 @@ class Sudoku:
             self.printLeft()
             print(self)
 
-            print(self._cells[6]._possibleList)
-
             # Repeat singleNumber
             for cell in filter(lambda c: c.number == 0, self._cells):
                 self.singleNumber(cell)
@@ -161,6 +159,22 @@ class Sudoku:
             for cell in filter(lambda c: c.number == 0, self._cells):
                 self.singleNumber(cell)
 
+            self.printLeft()
+            print(self)
+
+            # Fourth strategy - double Exclusive
+
+            for square in self._squares:
+                self.doubleExclusive(square)
+
+            for row in self._rows:
+                self.doubleExclusive(row)
+
+            for col in self._cols:
+                self.doubleExclusive(col)
+
+            for cell in filter(lambda c: c.number == 0, self._cells):
+                self.singleNumber(cell)
 
 
             self.printLeft()
@@ -179,25 +193,12 @@ class Sudoku:
                             cellsN.append(cell)
                         if m in cell._possibleList:
                             cellsM.append(cell)
-                        if cellsM == cellsN:
-
-        for n in range(1, 10):
-            for m in range(1, 10):
-                if n != m:
-                    taken = False
-                    for k, cell in group.items():
-                        if cell.number == n or cell.number == m:
-                            taken = True
-                    if taken == False:
-                        cellsN = []
-                        cellsM = []
-                        for k, cell in group.items():
-                            if n in cell._possibleList:
-                                cellsN.append(cell)
-                            if m in cell._possibleList:
-                                cellsM.append(cell)
-                        if cellsM == cellsN:
-                            # remove anything that's not m or n.
+                    if len(cellsM) == 2:
+                        if cellsM == cellsN :
+                            for cell in cellsN:
+                                for o in cell._possibleList:
+                                    if o != n and o != m:
+                                        cell.removeFromPossible(o)
 
 
 
