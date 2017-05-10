@@ -10,13 +10,13 @@ class Sudoku:
         self._rows = []
         self._squares = []
         self.makeElms()
+        self.left = 0
 
     def makeElms(self):
         for i in range(0, 9):
             self._cols.append(Block(i))
             self._rows.append(Block(i))
             self._squares.append(Block(i))
-
 
 
     def stringToCell(self, sudoku_string):
@@ -110,38 +110,212 @@ class Sudoku:
 
         return top + cont + bottom
 
+
     def solve(self):
-        i = 0
-        j = 0
-        k = 0
-        back = False
-        while i < 81:
-            if i < 0:
-                self.negativesDiagnosis()
-                raise IndexError("Something went seriously wrong: your code is checking negative cells")
-            i = self.isInitial(i, back)
-            if i > 80:
-                return
-            cell = self._cells[i]
-            result = self.addAndCheck(cell)
-            if result == True:
-                if k % 10 != 0:
-                    print("[{}]".format(j), end='')
-                else:
-                    print("[{}]".format(j))
-                k += 1
-                back = False
-                i += 1
-            else:
-                cell.number = 0
-                back = True
-                i -= 1
-            j += 1
+
+        # First strategy -- No errors
+        for cell in filter(lambda x: x.initial is False, self._cells):
+            if cell == self._cells[28]:
+                print("hered")
+            self.populateList(cell)
+            self.singleNumber(cell)
+        self.printLeft()
+        print(self)
 
 
 
-        print("")
-        return
+        for i in range(0, 3):
+
+            # Second Strategy
+            for row in self._rows:
+                self.singleInGroup(row)
+            for col in self._cols:
+                self.singleInGroup(col)
+            for square in self._squares:
+                self.singleInGroup(square)
+            self.printLeft()
+            print(self)
+
+            print(self._cells[6]._possibleList)
+
+            # Repeat singleNumber
+            for cell in filter(lambda c: c.number == 0, self._cells):
+                self.singleNumber(cell)
+
+            self.printLeft()
+            print(self)
+
+            # Third strategy - not sure it's that effective
+            # Not working for the moment !!!!!!!
+            for square in self._squares:
+                self.squareToColRow(square)
+
+            for row in self._rows:
+                self.rowToSquare(row)
+
+            for col in self._cols:
+                self.colToSquare(col)
+
+
+            # Repeat singleNumber
+            for cell in filter(lambda c: c.number == 0, self._cells):
+                self.singleNumber(cell)
+
+
+
+            self.printLeft()
+            print(self)
+
+
+    #    could be reduced immensely with group possibleList
+    def doubleExclusive(self, group):
+        for n in group.leftNumbers:
+            for m in group.leftNumbers:
+                if n != m:
+                    cellsN = []
+                    cellsM = []
+                    for cell in group.leftCells:
+                        if n in cell._possibleList:
+                            cellsN.append(cell)
+                        if m in cell._possibleList:
+                            cellsM.append(cell)
+                        if cellsM == cellsN:
+
+        for n in range(1, 10):
+            for m in range(1, 10):
+                if n != m:
+                    taken = False
+                    for k, cell in group.items():
+                        if cell.number == n or cell.number == m:
+                            taken = True
+                    if taken == False:
+                        cellsN = []
+                        cellsM = []
+                        for k, cell in group.items():
+                            if n in cell._possibleList:
+                                cellsN.append(cell)
+                            if m in cell._possibleList:
+                                cellsM.append(cell)
+                        if cellsM == cellsN:
+                            # remove anything that's not m or n.
+
+
+
+
+    def singleInGroup(self, group):
+        for n in range(1, 10):
+            total = 0
+            singleCell = 0
+            for k, cell in group.items():
+                if cell.number == 0:
+                    if n in cell._possibleDict:
+                        total += 1
+                        singleCell = cell
+            if total == 1:
+                singleCell.changeNumber(n)
+                self.cleanLine(singleCell)
+
+
+    def singleInLine(self, cell):
+        number = 0
+        for n in cell._possibleDict:
+            single = True
+            for k, nCell in cell.row.items():
+                if n in nCell._possibleList:
+                    single = False
+            for k, nCell in cell.row.items():
+                if n in nCell._possibleList:
+                    single = False
+            for k, nCell in cell.row.items():
+                if n in nCell._possibleList:
+                    single = False
+            if single is True:
+                number = n
+        if number != 0:
+            cell.changeNumber(number)
+            self.cleanLine(cell)
+
+    def squareToColRow(self, square):
+        for n in range(1, 10):
+            cells = []
+            for k, cell in square.items():
+                if n in cell._possibleList:
+                    cells.append(cell)
+            if len(cells) > 0 & len(cells) < 4:
+                if all(c.row == cells[0].row for c in cells):
+                    self.straightenRow(cells[0].row, square, n)
+                if all(c.col == cells[0].col for c in cells):
+                    self.straightenCol(cells[0].col, square, n)
+
+    def colToSquare(self, col):
+        for n in range(1, 10):
+            cells = []
+            for k, cell in col.items():
+                if n in cell._possibleList:
+                    cells.append(cell)
+            if len(cells) > 0 & len(cells) < 4:
+                if all(c.row == cells[0].square for c in cells):
+                    self.straightenSquare(col, cells[0].square, n)
+
+    def rowToSquare(self, row):
+        for n in range(1, 10):
+            cells = []
+            for k, cell in row.items():
+                if n in cell._possibleList:
+                    cells.append(cell)
+            if len(cells) > 0 & len(cells) < 4:
+                if all(c.row == cells[0].square for c in cells):
+                    self.straightenSquare(row, cells[0].square, n)
+
+
+    def straightenSquare(self, square, colRow, number):
+        for k, cell in colRow.items():
+            if (cell.square != square) & (number in cell._possibleList):
+                cell.removeFromPossible(number)
+
+    def straightenCol(self, col, square, number):
+        for k, cell in square.items():
+            if (cell.col != col) & (number in cell._possibleList):
+                cell.removeFromPossible(number)
+
+    def straightenRow(self, row, square, number):
+        for k, cell in square.items():
+            if (cell.row != row) & (number in cell._possibleList):
+                cell.removeFromPossible(number)
+
+
+    def populateList(self, cell):
+        for n in range(1, 10):
+            single = True
+            for k, nCell in cell.row.items():
+                if nCell.number == n:
+                    single = False
+            for k, nCell in cell.col.items():
+                if nCell.number == n:
+                    single = False
+            for k, nCell in cell.square.items():
+                if nCell.number == n:
+                    single = False
+            if single:
+                cell.addToPossible(n)
+
+    def singleNumber(self, cell):
+        if cell.nOfPossibilities() == 1:
+            cell.changeNumber(cell._possibleList[0])
+            self.cleanLine(cell)
+
+
+    def cleanLine(self, cell):
+        self.cleanGroup(cell, cell.row)
+        self.cleanGroup(cell, cell.col)
+        self.cleanGroup(cell, cell.square)
+
+
+    def cleanGroup(self, cell, group):
+        for k, nCell in group.items():
+            if cell.number in nCell._possibleDict:
+                nCell.removeFromPossible(cell.number)
+
 
     def isInitial(self, i, back):
         if self._cells[i].initial == True:
@@ -192,6 +366,13 @@ class Sudoku:
         for c in self._cells:
             if c.initial == False & c.number != 0:
                 print("This cell col {0}, row {1}, value {2}".format(c.col, c.row, c.number))
+
+    def printLeft(self):
+        left = 0
+        for cell in self._cells:
+            if cell.number == 0:
+                left += 1
+        print(left)
 
 
 

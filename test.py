@@ -2,18 +2,24 @@
 
 from sudoku import Sudoku
 
-string = "350400108800007000004001000048705001010080030900604850000100300000200009702003016"
+string = "005280000000004100009000403900700060080010040050009001406000200007400000000025600"
 
 sud = Sudoku()
 
 sud.stringToCell(string)
 
+sud.printLeft()
 print(sud)
 
 sud.solve()
 
-print("")
-print(sud)
+
+
+# Ideas:
+# - [performance] add a field in block listing the remaining numbers to be found in that block.
+
+
+
 
 
 
