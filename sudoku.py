@@ -1,5 +1,7 @@
 # -*-coding:Utf-8 -*
 
+import memory_profiler
+
 from cell import Cell, Block
 
 class Sudoku:
@@ -11,6 +13,7 @@ class Sudoku:
         self._squares = []
         self.makeElms()
 
+    @profile
     def makeElms(self):
         for i in range(0, 9):
             self._cols.append(Block(i))
@@ -18,7 +21,7 @@ class Sudoku:
             self._squares.append(Block(i))
 
 
-
+    @profile
     def stringToCell(self, sudoku_string):
         if len(sudoku_string) != 81:
             raise ValueError("You have not entered the right number of digits.")
@@ -110,6 +113,7 @@ class Sudoku:
 
         return top + cont + bottom
 
+    @profile
     def solve(self):
         i = 0
         j = 0

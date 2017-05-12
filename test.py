@@ -5,20 +5,23 @@ import memory_profiler
 
 
 @profile
-def function():
+def t_func():
 
-    string = "350400108800007000004001000048705001010080030900604850000100300000200009702003016"
+    string = "460805003003070000075901060084000070900706001030000650090402830000080500300509027"
 
     sud = Sudoku()
 
     sud.stringToCell(string)
-
     print(sud)
 
     sud.solve()
 
+    abv = 23405934703458
+
     print("")
     print(sud)
 
+if __name__ == '__main__':
+    t_func()
 
 
